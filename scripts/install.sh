@@ -15,26 +15,42 @@ jupyter nbextension enable code_prettify/autopep8
 mkdir ~/notebooks
 mkdir ~/data
 
-# @description Install The ultimate Vim configuration (vimrc) https://github.com/amix/vimrc
-# @exitcode 0 If successfull and install vimrc
+# @description Install and configure UFW firewall
+# @exitcode 0 If successful and install ufw
 # @exitcode 1 On failure
-install_docker() {
-    # 1) Download Docker install script
-    wget https://raw.githubusercontent.com/hummingbot/hummingbot/master/installation/install-docker/install-docker-ubuntu.sh
+install_ufw(){
+    echo "Install UFW firewall"
 
-    # 2) Enable script permissions
-    chmod a+x install-docker-ubuntu.sh
-
-    # 3) Run installation
-    ./install-docker-ubuntu.sh
+    install_package ufw > /dev/null
+    ufw default deny incoming
+    ufw default allow outgoing
+    ufw allow ssh
+    ufw allow http
+    ufw allow https
+    ufw --force enable
 }
 
-# @description Install The ultimate Vim configuration (vimrc) https://github.com/amix/vimrc
-# @exitcode 0 If successfull and install vimrc
+# @description Install and configure Fail2ban
+# @exitcode 0 If successfull and install Fail2ban
 # @exitcode 1 On failure
-install_docker_compose(){
-    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
+install_fail2ban() {
+    echo "Install Fail2ban"
+    install_package fail2ban > /dev/null
+    systemctl start fail2ban
+    systemctl enable fail2ban
+    # Configure Fail2ban to block IP addresses that have 3 failed login attempts within 5 minutes
+    cat > /etc/fail2ban/jail.local << EOF
+[DEFAULT]
+bantime = 86400
+banaction = iptables-multiport
+findtime = 300
+maxretry = 3
+
+[sshd]
+enabled = true
+EOF
+
+    systemctl restart fail2ban
 }
 
 # @description Install The ultimate Vim configuration (vimrc) https://github.com/amix/vimrc
