@@ -15,6 +15,27 @@ jupyter nbextension enable code_prettify/autopep8
 mkdir ~/notebooks
 mkdir ~/data
 
+# @description Install The ultimate Vim configuration (vimrc) https://github.com/amix/vimrc
+# @exitcode 0 If successfull and install vimrc
+# @exitcode 1 On failure
+install_docker() {
+    # 1) Download Docker install script
+    wget https://raw.githubusercontent.com/hummingbot/hummingbot/master/installation/install-docker/install-docker-ubuntu.sh
+
+    # 2) Enable script permissions
+    chmod a+x install-docker-ubuntu.sh
+
+    # 3) Run installation
+    ./install-docker-ubuntu.sh
+}
+
+# @description Install The ultimate Vim configuration (vimrc) https://github.com/amix/vimrc
+# @exitcode 0 If successfull and install vimrc
+# @exitcode 1 On failure
+install_docker_compose(){
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+}
 
 # @description Install The ultimate Vim configuration (vimrc) https://github.com/amix/vimrc
 # @exitcode 0 If successfull and install vimrc
