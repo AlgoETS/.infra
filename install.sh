@@ -15,6 +15,45 @@ jupyter nbextension enable code_prettify/autopep8
 mkdir ~/notebooks
 mkdir ~/data
 
+# @description Install and configure UFW firewall
+# @exitcode 0 If successful and install ufw
+# @exitcode 1 On failure
+install_ufw(){
+    echo "Install UFW firewall"
+
+    install_package ufw > /dev/null
+    ufw default deny incoming
+    ufw default allow outgoing
+    ufw allow ssh
+    ufw allow http
+    ufw allow https
+    ufw --force enable
+}
+
+# @description Install and configure Fail2ban
+# @exitcode 0 If successfull and install Fail2ban
+# @exitcode 1 On failure
+install_fail2ban() {
+    echo "Install Fail2ban"
+    
+    install_package fail2ban > /dev/null
+    systemctl start fail2ban
+    systemctl enable fail2ban
+    
+    # Configure Fail2ban to block IP addresses that have 3 failed login attempts within 5 minutes
+    cat > /etc/fail2ban/jail.local << EOF
+[DEFAULT]
+bantime = 86400
+banaction = iptables-multiport
+findtime = 300
+maxretry = 3
+
+[sshd]
+enabled = true
+EOF
+
+    systemctl restart fail2ban
+}
 
 # @description Install The ultimate Vim configuration (vimrc) https://github.com/amix/vimrc
 # @exitcode 0 If successfull and install vimrc
