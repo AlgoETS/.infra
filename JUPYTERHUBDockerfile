@@ -1,0 +1,26 @@
+FROM jupyterhub/jupyterhub
+
+# Install Python 3
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Install required Python libraries
+RUN pip3 install numpy pandas scipy scikit-learn matplotlib seaborn jupyter
+
+# Install JupyterHub and Jupyter Notebook server
+RUN pip3 install jupyterhub jupyterlab
+
+# Add a user
+RUN useradd -m -s /bin/bash jupyter
+
+# Set the working directory
+WORKDIR /home/jupyter
+
+# Copy a configuration file for JupyterHub
+COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
+
+# Copy a script to start Jupyter Notebook server
+COPY start-singleuser.sh /usr/local/bin/start-singleuser.sh
+RUN chmod 755 /usr/local/bin/start-singleuser.sh
+
+# Start JupyterHub
+CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
