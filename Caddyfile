@@ -1,0 +1,35 @@
+{
+        log {
+                output file /home/algoets/caddy/access.log {
+                        roll_size 10mb
+                        roll_keep 5
+                        roll_keep_for 168h
+                }
+        }
+        email algoets@algoets.ca
+}
+
+
+vpn.algoets.ca {
+        reverse_proxy ip:51820
+}
+
+status.algoets.ca {
+        reverse_proxy ip:3001
+}
+
+jupyterlab.algoets.ca {
+        reverse_proxy ip:10000
+}
+
+algoets.ca {
+        reverse_proxy ip:443
+}
+
+portainer.algoets.ca {
+        reverse_proxy ip:9000
+}
+
+k8s.algoets.ca {
+        reverse_proxy ip:11000
+}
